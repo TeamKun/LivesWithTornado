@@ -1,0 +1,7 @@
+name: TornadoPlugin
+version: ${project.version}
+main: net.kunmc.lab.tornadoplugin.TornadoPlugin
+api-version: 1.16
+commands:
+  tornado:
+    usage: /tornado <name> <radius> <height> <speed>

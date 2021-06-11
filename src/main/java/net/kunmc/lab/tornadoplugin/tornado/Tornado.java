@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
@@ -28,6 +29,7 @@ public class Tornado {
     private double centrifugalCoef;
     private boolean exceptCreatives = true;
     private boolean exceptSpectators = true;
+    private boolean exceptFlowing = true;
     private final Set<Entity> involvedEntitySet = Collections.synchronizedSet(new LinkedHashSet<>());
     private BukkitTask involveTask;
     private final Set<BukkitTask> windUpTaskSet = Collections.synchronizedSet(new LinkedHashSet<>());
@@ -41,10 +43,11 @@ public class Tornado {
         this.centrifugalCoef = centrifugalCoef;
     }
 
-    public Tornado(Entity coreEntity, double radius, double height, double speed, double riseCoef, double centrifugalCoef, boolean exceptCreatives, boolean exceptSpectators) {
+    public Tornado(Entity coreEntity, double radius, double height, double speed, double riseCoef, double centrifugalCoef, boolean exceptCreatives, boolean exceptSpectators, boolean exceptFlowing) {
         this(coreEntity, radius, height, speed, riseCoef, centrifugalCoef);
         this.exceptCreatives = exceptCreatives;
         this.exceptSpectators = exceptSpectators;
+        this.exceptFlowing = exceptFlowing;
     }
 
     public void summon() {
@@ -88,6 +91,10 @@ public class Tornado {
         this.exceptSpectators = exceptSpectators;
     }
 
+    public void setExceptFlowing(boolean exceptFlowing) {
+        this.exceptFlowing = exceptFlowing;
+    }
+
     private class InvolveTask extends BukkitRunnable {
         @Override
         public void run() {
@@ -129,6 +136,15 @@ public class Tornado {
                 for (int x = -2 - offset; x <= 2 + offset; x++) {
                     for (int z = -2 - offset; z <= 2 + offset; z++) {
                         Block b = center.getRelative(x, 0, z);
+
+                        //exceptFlowingがtrueの場合,溶岩流と水流を処理対象から外す.
+                        if (b.getType().equals(Material.LAVA) || b.getType().equals(Material.WATER)) {
+                            Levelled data = ((Levelled) b.getBlockData());
+                            if (exceptFlowing && data.getLevel() >= 1) {
+                                continue;
+                            }
+                        }
+
                         if (center.getLocation().distance(b.getLocation()) <= radius) {
                             blockSet.add(b);
                         }

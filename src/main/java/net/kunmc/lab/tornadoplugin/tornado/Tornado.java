@@ -26,6 +26,7 @@ public class Tornado {
     private boolean exceptSpectators = true;
     private boolean exceptFlowing = true;
     private int limitInvolvedEntity = 0;
+    private double involveProbability = 1.0;
     private final Set<Entity> involvedEntitySet = Collections.synchronizedSet(new LinkedHashSet<>());
     private BukkitTask involveTask;
     private BukkitTask effectTask;
@@ -107,6 +108,10 @@ public class Tornado {
         this.limitInvolvedEntity = limit;
     }
 
+    public void setInvolveProbability(double probability) {
+        this.involveProbability = probability;
+    }
+
     private class InvolveTask extends BukkitRunnable {
         @Override
         public void run() {
@@ -120,10 +125,13 @@ public class Tornado {
                 if (x.getType().equals(Material.AIR) || x.getType().equals(Material.CAVE_AIR)) {
                     return;
                 }
-                BlockData blockData = x.getBlockData();
-                x.setType(Material.AIR);
-                FallingBlock fallingBlock = x.getWorld().spawnFallingBlock(x.getLocation(), blockData);
-                fallingBlock.setGravity(false);
+
+                if (Math.random() <= involveProbability) {
+                    BlockData blockData = x.getBlockData();
+                    x.setType(Material.AIR);
+                    FallingBlock fallingBlock = x.getWorld().spawnFallingBlock(x.getLocation(), blockData);
+                    fallingBlock.setGravity(false);
+                }
             });
 
             center.getNearbyEntities(radius, height, radius).parallelStream()
@@ -137,8 +145,10 @@ public class Tornado {
                         return true;
                     })
                     .forEach(x -> {
-                        if (involvedEntitySet.add(x)) {
-                            windUpTaskSet.add(new WindUpTask(x).runTaskTimerAsynchronously(TornadoPlugin.getInstance(), 0, 0));
+                        if (Math.random() <= involveProbability) {
+                            if (involvedEntitySet.add(x)) {
+                                windUpTaskSet.add(new WindUpTask(x).runTaskTimerAsynchronously(TornadoPlugin.getInstance(), 0, 0));
+                            }
                         }
                     });
         }

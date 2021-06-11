@@ -1,12 +1,14 @@
 package net.kunmc.lab.tornadoplugin.tornado;
 
 import net.kunmc.lab.tornadoplugin.TornadoPlugin;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
@@ -24,6 +26,8 @@ public class Tornado {
     private double speed;
     private double riseCoef;
     private double centrifugalCoef;
+    private boolean exceptCreatives = true;
+    private boolean exceptSpectators = true;
     private final Set<Entity> involvedEntitySet = Collections.synchronizedSet(new LinkedHashSet<>());
     private BukkitTask involveTask;
     private final Set<BukkitTask> windUpTaskSet = Collections.synchronizedSet(new LinkedHashSet<>());
@@ -37,6 +41,12 @@ public class Tornado {
         this.centrifugalCoef = centrifugalCoef;
     }
 
+    public Tornado(Entity coreEntity, double radius, double height, double speed, double riseCoef, double centrifugalCoef, boolean exceptCreatives, boolean exceptSpectators) {
+        this(coreEntity, radius, height, speed, riseCoef, centrifugalCoef);
+        this.exceptCreatives = exceptCreatives;
+        this.exceptSpectators = exceptSpectators;
+    }
+
     public void summon() {
         involveTask = new InvolveTask().runTaskTimer(TornadoPlugin.getInstance(), 0, 4);
     }
@@ -44,6 +54,10 @@ public class Tornado {
     public void remove() {
         involveTask.cancel();
         windUpTaskSet.forEach(BukkitTask::cancel);
+    }
+
+    public Entity getCoreEntity() {
+        return this.coreEntity;
     }
 
     public void setRadius(double radius) {
@@ -66,6 +80,14 @@ public class Tornado {
         this.centrifugalCoef = centrifugalCoef;
     }
 
+    public void setExceptCreatives(boolean exceptCreatives) {
+        this.exceptCreatives = exceptCreatives;
+    }
+
+    public void setExceptSpectators(boolean exceptSpectators) {
+        this.exceptSpectators = exceptSpectators;
+    }
+
     private class InvolveTask extends BukkitRunnable {
         @Override
         public void run() {
@@ -84,6 +106,13 @@ public class Tornado {
             center.getNearbyEntities(radius, height, radius).parallelStream()
                     .filter(x -> !x.equals(coreEntity))
                     .filter(x -> x.getLocation().getY() >= center.getY() - 3)
+                    .filter(x -> {
+                        if (x instanceof Player) {
+                            GameMode mode = ((Player) x).getGameMode();
+                            return (!exceptCreatives || !mode.equals(GameMode.CREATIVE)) && (!exceptSpectators || !mode.equals(GameMode.SPECTATOR));
+                        }
+                        return true;
+                    })
                     .forEach(x -> {
                         if (involvedEntitySet.add(x)) {
                             windUpTaskSet.add(new WindUpTask(x).runTaskTimerAsynchronously(TornadoPlugin.getInstance(), 0, 0));
@@ -122,6 +151,14 @@ public class Tornado {
 
         @Override
         public void run() {
+            if (entity instanceof Player) {
+                GameMode mode = ((Player) entity).getGameMode();
+                if (exceptCreatives && mode.equals(GameMode.CREATIVE) || exceptSpectators && mode.equals(GameMode.SPECTATOR)) {
+                    involvedEntitySet.remove(entity);
+                    this.cancel();
+                }
+            }
+
             double degree = Math.toDegrees(Math.atan2(entity.getLocation().getZ() - center.getZ(), entity.getLocation().getX() - center.getX()));
             degree = (degree + speed) % 360;
             double radian = Math.toRadians(degree);
@@ -137,6 +174,7 @@ public class Tornado {
             heightOffset += riseCoef;
             double nextY = center.getY() + heightOffset;
             double nextZ = center.getZ() + fromOrigin * sin;
+
             entity.setVelocity(new Vector(nextX, nextY, nextZ).subtract(entity.getLocation().toVector()));
 
             if (entity instanceof FallingBlock) {

@@ -25,6 +25,7 @@ public class Tornado {
     private boolean exceptCreatives = true;
     private boolean exceptSpectators = true;
     private boolean exceptFlowing = true;
+    private int limitInvolvedEntity = 0;
     private final Set<Entity> involvedEntitySet = Collections.synchronizedSet(new LinkedHashSet<>());
     private BukkitTask involveTask;
     private BukkitTask effectTask;
@@ -102,10 +103,18 @@ public class Tornado {
         }
     }
 
+    public void setLimitInvolvedEntity(int limit) {
+        this.limitInvolvedEntity = limit;
+    }
+
     private class InvolveTask extends BukkitRunnable {
         @Override
         public void run() {
             center = coreEntity.getLocation();
+
+            if (limitInvolvedEntity != 0 && involvedEntitySet.size() >= limitInvolvedEntity) {
+                return;
+            }
 
             getAffectedBlocks(center, radius, height).forEach(x -> {
                 if (x.getType().equals(Material.AIR) || x.getType().equals(Material.CAVE_AIR)) {

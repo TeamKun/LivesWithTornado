@@ -25,8 +25,10 @@ public class Tornado {
     private boolean exceptCreatives = true;
     private boolean exceptSpectators = true;
     private boolean exceptFlowing = true;
+    private boolean exceptOtherTornado = true;
     private int limitInvolvedEntity = 0;
     private double involveProbability = 1.0;
+    private String entityMetadataKey = "TornadoPluginEntity";
     private final Set<Entity> involvedEntitySet = Collections.synchronizedSet(new LinkedHashSet<>());
     private BukkitTask involveTask;
     private BukkitTask effectTask;
@@ -112,6 +114,14 @@ public class Tornado {
         this.involveProbability = probability;
     }
 
+    public void setExceptOtherTornado(boolean exceptOtherTornado) {
+        this.exceptOtherTornado = exceptOtherTornado;
+    }
+
+    public void setEntityMetadataKey(String metadataKey) {
+        this.entityMetadataKey = metadataKey;
+    }
+
     private class InvolveTask extends BukkitRunnable {
         @Override
         public void run() {
@@ -137,6 +147,7 @@ public class Tornado {
             center.getNearbyEntities(radius, height, radius).parallelStream()
                     .filter(x -> !x.equals(coreEntity))
                     .filter(x -> x.getLocation().getY() >= center.getY() - 3)
+                    .filter(x -> !(exceptOtherTornado && x.hasMetadata(entityMetadataKey)))
                     .filter(x -> {
                         if (x instanceof Player) {
                             GameMode mode = ((Player) x).getGameMode();

@@ -143,7 +143,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             sender.sendMessage(ChatColor.RED + "<y>には実数を入力してください.");
             return;
         }
-
+        
         double z;
         try {
             z = Double.parseDouble(args[3]);

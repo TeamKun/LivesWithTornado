@@ -194,7 +194,7 @@ public class Tornado {
 
                 degree = (degree + 20) % 360;
                 heightOffset += 0.25;
-                currentRadius += 0.125;
+                currentRadius = Math.min(currentRadius + 0.125, radius);
 
                 if (heightOffset > height) {
                     this.cancel();

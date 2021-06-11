@@ -1,9 +1,7 @@
 package net.kunmc.lab.tornadoplugin.tornado;
 
 import net.kunmc.lab.tornadoplugin.TornadoPlugin;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
@@ -14,10 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Tornado {
     private final Entity coreEntity;
@@ -32,6 +27,7 @@ public class Tornado {
     private boolean exceptFlowing = true;
     private final Set<Entity> involvedEntitySet = Collections.synchronizedSet(new LinkedHashSet<>());
     private BukkitTask involveTask;
+    private BukkitTask effectTask;
     private final Set<BukkitTask> windUpTaskSet = Collections.synchronizedSet(new LinkedHashSet<>());
 
     public Tornado(Entity coreEntity, double radius, double height, double speed, double riseCoef, double centrifugalCoef) {
@@ -52,11 +48,13 @@ public class Tornado {
 
     public void summon() {
         involveTask = new InvolveTask().runTaskTimer(TornadoPlugin.getInstance(), 0, 4);
+        effectTask = new EffectTaskGenerator().runTaskTimerAsynchronously(TornadoPlugin.getInstance(), 0, 60);
     }
 
     public void remove() {
         involveTask.cancel();
         windUpTaskSet.forEach(BukkitTask::cancel);
+        effectTask.cancel();
     }
 
     public Entity getCoreEntity() {
@@ -93,6 +91,15 @@ public class Tornado {
 
     public void setExceptFlowing(boolean exceptFlowing) {
         this.exceptFlowing = exceptFlowing;
+    }
+
+    public void setEffectEnabled(boolean enable) {
+        if (enable) {
+            effectTask.cancel();
+            effectTask = new EffectTaskGenerator().runTaskTimerAsynchronously(TornadoPlugin.getInstance(), 0, 60);
+        } else {
+            effectTask.cancel();
+        }
     }
 
     private class InvolveTask extends BukkitRunnable {
@@ -153,6 +160,46 @@ public class Tornado {
             }
 
             return blockSet;
+        }
+    }
+
+    private class EffectTaskGenerator extends BukkitRunnable {
+        private final List<BukkitTask> taskList = new ArrayList<>();
+
+        @Override
+        public void run() {
+            taskList.add(new EffectTask().runTaskTimerAsynchronously(TornadoPlugin.getInstance(), 0, 0));
+        }
+
+        @Override
+        public void cancel() {
+            taskList.forEach(BukkitTask::cancel);
+            super.cancel();
+        }
+
+        private class EffectTask extends BukkitRunnable {
+            private double degree = 0;
+            private double heightOffset = 0;
+            private double currentRadius = 3;
+
+            @Override
+            public void run() {
+                double radian = Math.toRadians(degree);
+                double x = center.getX() + Math.cos(radian) * currentRadius;
+                double y = center.getY() + heightOffset;
+                double z = center.getZ() + Math.sin(radian) * currentRadius;
+
+                World world = center.getWorld();
+                world.spawnParticle(Particle.REDSTONE, x, y, z, 3, new Particle.DustOptions(Color.WHITE, 10));
+
+                degree = (degree + 20) % 360;
+                heightOffset += 0.25;
+                currentRadius += 0.125;
+
+                if (heightOffset > height) {
+                    this.cancel();
+                }
+            }
         }
     }
 

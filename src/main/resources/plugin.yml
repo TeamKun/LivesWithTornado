@@ -9,3 +9,4 @@ commands:
       /tornado summon location <world> <x> <y> <z> <tornadoName> <radius> <height> <speed>
       /tornado remove <tornadoName>
       /tornado modify <tornadoName> <settingItem> <value>
+    default: op

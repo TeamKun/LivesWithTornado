@@ -8,6 +8,7 @@ public class Config {
     public static boolean exceptCreatives = true;
     public static boolean exceptSpectators = true;
     public static boolean exceptFlowing = true;
+    public static boolean exceptOtherTornado = true;
     public static int limitInvolvedEntity = 0;
     public static double involveProbability = 1.0;
 }

@@ -9,7 +9,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.PigZombie;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -110,8 +113,14 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         }
 
         Tornado tornado = new Tornado(entityList.get(0), radius, height, speed, Config.riseCoef, Config.centrifugalCoef);
-        stringTornadoMap.put(tornadoName, tornado);
+        tornado.setExceptCreatives(Config.exceptCreatives);
+        tornado.setExceptSpectators(Config.exceptSpectators);
+        tornado.setExceptFlowing(Config.exceptFlowing);
+        tornado.setExceptOtherTornado(Config.exceptOtherTornado);
+        tornado.setLimitInvolvedEntity(Config.limitInvolvedEntity);
+        tornado.setInvolveProbability(Config.involveProbability);
         tornado.summon();
+        stringTornadoMap.put(tornadoName, tornado);
         sender.sendMessage(ChatColor.GREEN + tornadoName + "が" + entityList.get(0).getName() + "に生成されました.");
     }
 
@@ -143,7 +152,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             sender.sendMessage(ChatColor.RED + "<y>には実数を入力してください.");
             return;
         }
-        
+
         double z;
         try {
             z = Double.parseDouble(args[3]);
@@ -206,9 +215,12 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                     entity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK).setBaseValue(0.0);
 
                     new BukkitRunnable() {
+                        Player target;
+
                         @Override
                         public void run() {
                             if (entity.isDead()) {
+                                target.setGlowing(false);
                                 this.cancel();
                             }
 
@@ -216,7 +228,13 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                                     .map(x -> ((Player) x))
                                     .collect(Collectors.toList());
                             if (!playerList.isEmpty()) {
-                                entity.setTarget(((LivingEntity) Bukkit.selectEntities(Bukkit.getConsoleSender(), "@r").get(0)));
+                                if (target != null) {
+                                    target.setGlowing(false);
+                                }
+                                target = playerList.get(0);
+                                target.setGlowing(true);
+                                entity.setTarget(target);
+                                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "WARNING: " + target.getName() + "が竜巻に追いかけられています");
                             }
                         }
                     }.runTaskTimerAsynchronously(TornadoPlugin.getInstance(), 0, Config.changeTargetInterval);
@@ -226,6 +244,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         tornado.setExceptCreatives(Config.exceptCreatives);
         tornado.setExceptSpectators(Config.exceptSpectators);
         tornado.setExceptFlowing(Config.exceptFlowing);
+        tornado.setExceptOtherTornado(Config.exceptOtherTornado);
         tornado.setLimitInvolvedEntity(Config.limitInvolvedEntity);
         tornado.setInvolveProbability(Config.involveProbability);
         tornado.summon();

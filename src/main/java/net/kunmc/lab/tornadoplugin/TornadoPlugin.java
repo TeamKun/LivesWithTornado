@@ -37,5 +37,8 @@ public final class TornadoPlugin extends JavaPlugin {
         Bukkit.selectEntities(Bukkit.getConsoleSender(), "@e").stream()
                 .filter(x -> x.hasMetadata(Config.metadataKey))
                 .forEach(Entity::remove);
+        Bukkit.getOnlinePlayers().forEach(x -> {
+            x.setGlowing(false);
+        });
     }
 }

@@ -28,6 +28,7 @@ public class Tornado {
     private boolean exceptOtherTornado = true;
     private int limitInvolvedEntity = 0;
     private double involveProbability = 1.0;
+    private boolean isRemoved = false;
     private String entityMetadataKey = "TornadoPluginEntity";
     private final Set<Entity> involvedEntitySet = Collections.synchronizedSet(new LinkedHashSet<>());
     private BukkitTask involveTask;
@@ -59,6 +60,7 @@ public class Tornado {
         involveTask.cancel();
         windUpTaskSet.forEach(BukkitTask::cancel);
         effectTask.cancel();
+        this.isRemoved = true;
     }
 
     public Entity getCoreEntity() {
@@ -122,17 +124,25 @@ public class Tornado {
         this.entityMetadataKey = metadataKey;
     }
 
+    public boolean isRemoved() {
+        return this.isRemoved;
+    }
+
     private class InvolveTask extends BukkitRunnable {
         @Override
         public void run() {
-            center = coreEntity.getLocation();
-
-            if (limitInvolvedEntity != 0 && involvedEntitySet.size() >= limitInvolvedEntity) {
-                return;
+            if (coreEntity.isDead()) {
+                remove();
             }
+
+            center = coreEntity.getLocation();
 
             getAffectedBlocks(center, radius, height).forEach(x -> {
                 if (x.getType().equals(Material.AIR) || x.getType().equals(Material.CAVE_AIR)) {
+                    return;
+                }
+
+                if (limitInvolvedEntity != 0 && involvedEntitySet.size() >= limitInvolvedEntity) {
                     return;
                 }
 

@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 public class CommandHandler implements CommandExecutor, TabCompleter {
     private final Map<String, Tornado> stringTornadoMap = new HashMap<>();
-    private final List<String> settingItemList = Arrays.asList("radius", "height", "speed", "riseCoef", "centrifugalCoef", "exceptCreatives", "exceptSpectators", "exceptFlowing", "effectEnabled");
+    private final List<String> settingItemList = Arrays.asList("radius", "height", "speed", "riseCoef", "centrifugalCoef", "exceptCreatives", "exceptSpectators", "exceptFlowing", "effectEnabled", "limit", "probability");
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -223,8 +223,14 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 });
 
         Tornado tornado = new Tornado(coreEntity, radius, height, speed, Config.riseCoef, Config.centrifugalCoef);
-        stringTornadoMap.put(tornadoName, tornado);
+        tornado.setExceptCreatives(Config.exceptCreatives);
+        tornado.setExceptSpectators(Config.exceptSpectators);
+        tornado.setExceptFlowing(Config.exceptFlowing);
+        tornado.setLimitInvolvedEntity(Config.limitInvolvedEntity);
+        tornado.setInvolveProbability(Config.involveProbability);
         tornado.summon();
+
+        stringTornadoMap.put(tornadoName, tornado);
         sender.sendMessage(String.format(ChatColor.GREEN + "%sがx:%.3f y:%.3f z:%.3fに生成されました.", tornadoName, x, y, z));
     }
 
@@ -303,6 +309,12 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 break;
             case "effectEnabled":
                 tornado.setEffectEnabled(value != 0.0);
+                break;
+            case "limit":
+                tornado.setLimitInvolvedEntity(((int) value));
+                break;
+            case "probability":
+                tornado.setInvolveProbability(value);
                 break;
         }
 

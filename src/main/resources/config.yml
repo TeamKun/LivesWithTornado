@@ -2,3 +2,8 @@ changeTargetInterval: 600
 riseCoef: 0.0625
 centrifugalCoef: 0.0625
 metadataKey: TornadoPluginEntity
+exceptCreatives: true
+exceptSpectators: true
+exceptFlowing: true
+limitInvolvedEntity: 0
+involveProbability: 1.0

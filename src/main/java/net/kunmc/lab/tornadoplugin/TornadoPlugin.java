@@ -21,6 +21,11 @@ public final class TornadoPlugin extends JavaPlugin {
         Config.centrifugalCoef = getConfig().getDouble("centrifugalCoef");
         Config.changeTargetInterval = getConfig().getInt("changeTargetInterval");
         Config.metadataKey = getConfig().getString("metadataKey");
+        Config.exceptCreatives = getConfig().getBoolean("exceptCreatives");
+        Config.exceptSpectators = getConfig().getBoolean("exceptSpectators");
+        Config.exceptFlowing = getConfig().getBoolean("exceptFlowing");
+        Config.limitInvolvedEntity = getConfig().getInt("limitInvolvedEntity");
+        Config.involveProbability = getConfig().getDouble("involveProbability");
 
         CommandHandler commandHandler = new CommandHandler();
         getServer().getPluginCommand("tornado").setExecutor(commandHandler);

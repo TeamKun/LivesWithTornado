@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 public class CommandHandler implements CommandExecutor, TabCompleter {
     private final Map<String, Tornado> stringTornadoMap = new HashMap<>();
-    private final List<String> settingItemList = Arrays.asList("radius", "height", "speed", "riseCoef", "centrifugalCoef");
+    private final List<String> settingItemList = Arrays.asList("radius", "height", "speed", "riseCoef", "centrifugalCoef", "exceptCreatives", "exceptSpectators", "exceptFlowing");
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -291,6 +291,15 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 break;
             case "centrifugalCoef":
                 tornado.setCentrifugalCoef(value);
+                break;
+            case "exceptCreatives":
+                tornado.setExceptCreatives(value != 0.0);
+                break;
+            case "exceptSpectators":
+                tornado.setExceptSpectators(value != 0.0);
+                break;
+            case "exceptFlowing":
+                tornado.setExceptFlowing(value != 0.0);
                 break;
         }
 

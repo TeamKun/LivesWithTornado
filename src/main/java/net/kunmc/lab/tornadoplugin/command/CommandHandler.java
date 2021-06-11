@@ -251,7 +251,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
     private void modify(CommandSender sender, String[] args) {
         if (args.length < 3) {
-            sender.sendMessage(ChatColor.RED + "usage: /tornado modify <name> <settingItem> <value>");
+            sender.sendMessage(ChatColor.RED + "usage: /tornado modify <tornadoName> <settingItem> <value>");
             return;
         }
 

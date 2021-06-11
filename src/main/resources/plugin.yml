@@ -5,6 +5,7 @@ api-version: 1.16
 commands:
   tornado:
     usage: |-
-      /tornado summon <name> <selector> <radius> <height> <speed>
-      /tornado remove <name>
-      /tornado modify <name> <settingItem> <value>
+      /tornado summon entity <selector> <tornadoName> <radius> <height> <speed>
+      /tornado summon location <world> <x> <y> <z> <tornadoName> <radius> <height> <speed>
+      /tornado remove <tornadoName>
+      /tornado modify <tornadoName> <settingItem> <value>

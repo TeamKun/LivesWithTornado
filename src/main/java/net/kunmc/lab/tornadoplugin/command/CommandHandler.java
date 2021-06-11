@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 public class CommandHandler implements CommandExecutor, TabCompleter {
     private final Map<String, Tornado> stringTornadoMap = new HashMap<>();
-    private final List<String> settingItemList = Arrays.asList("radius", "height", "speed", "riseCoef", "centrifugalCoef", "exceptCreatives", "exceptSpectators", "exceptFlowing");
+    private final List<String> settingItemList = Arrays.asList("radius", "height", "speed", "riseCoef", "centrifugalCoef", "exceptCreatives", "exceptSpectators", "exceptFlowing", "effectEnabled");
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -300,6 +300,9 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 break;
             case "exceptFlowing":
                 tornado.setExceptFlowing(value != 0.0);
+                break;
+            case "effectEnabled":
+                tornado.setEffectEnabled(value != 0.0);
                 break;
         }
 

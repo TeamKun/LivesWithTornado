@@ -44,13 +44,7 @@ public class Tornado {
         this.centrifugalCoef = centrifugalCoef;
     }
 
-    public Tornado(Entity coreEntity, double radius, double height, double speed, double riseCoef, double centrifugalCoef, boolean exceptCreatives, boolean exceptSpectators, boolean exceptFlowing) {
-        this(coreEntity, radius, height, speed, riseCoef, centrifugalCoef);
-        this.exceptCreatives = exceptCreatives;
-        this.exceptSpectators = exceptSpectators;
-        this.exceptFlowing = exceptFlowing;
-    }
-
+ 
     public void summon() {
         involveTask = new InvolveTask().runTaskTimer(TornadoPlugin.getInstance(), 0, 4);
         effectTask = new EffectTaskGenerator().runTaskTimerAsynchronously(TornadoPlugin.getInstance(), 0, 60);

@@ -220,18 +220,25 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                         @Override
                         public void run() {
                             if (entity.isDead()) {
-                                target.setGlowing(false);
-                                this.cancel();
-                            }
-
-                            List<Player> playerList = Bukkit.selectEntities(Bukkit.getConsoleSender(), "@r").stream()
-                                    .map(x -> ((Player) x))
-                                    .collect(Collectors.toList());
-                            if (!playerList.isEmpty()) {
                                 if (target != null) {
                                     target.setGlowing(false);
                                 }
-                                target = playerList.get(0);
+                                this.cancel();
+                            }
+
+                            Player newTarget = Bukkit.selectEntities(Bukkit.getConsoleSender(), "@r").stream()
+                                    .map(x -> ((Player) x))
+                                    .filter(x -> x.getGameMode().equals(GameMode.SURVIVAL) || x.getGameMode().equals(GameMode.ADVENTURE))
+                                    .findFirst()
+                                    .orElse(null);
+
+                            if (target != null) {
+                                target.setGlowing(false);
+
+                            }
+
+                            if (newTarget != null) {
+                                target = newTarget;
                                 target.setGlowing(true);
                                 entity.setTarget(target);
                                 Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "WARNING: " + target.getName() + "が竜巻に追いかけられています");
@@ -247,6 +254,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         tornado.setExceptOtherTornado(Config.exceptOtherTornado);
         tornado.setLimitInvolvedEntity(Config.limitInvolvedEntity);
         tornado.setInvolveProbability(Config.involveProbability);
+        tornado.setInvolveProbability(0.15);
+        tornado.setLimitInvolvedEntity(1500);
         tornado.summon();
 
         stringTornadoMap.put(tornadoName, tornado);

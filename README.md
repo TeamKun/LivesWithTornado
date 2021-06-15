@@ -45,12 +45,18 @@
 スペクテイターモードのプレイヤーを巻き込むかどうか
 * exceptFlowing
 溶岩流と水流を巻き込むかどうか
+* exceptSource
+溶岩原と水源を巻き込むかどうか
 * effectEnabled
 竜巻のエフェクトを発生させるかどうか
 * limit(limitInvolvedEntity)
 巻き込むエンティティの上限値
-* probability(involveProbability)
-エンティティとブロックを巻き込む確率値
+* involveBlockProbability
+ブロックを巻き込む確率値
+* involveEntityProbability
+エンティティを巻き込む確率値
+* followingSpeed
+summon locationにより出した竜巻の追跡速度(default: 0.3)
 
 ## modifyコマンドに関する補足
 settingItemの内boolean値を書き込む項目,具体的にはexceptCreatives,exceptSpectators,exceptFlowing,effectEnabledは\<value>が0の時false,0以外の時にはtrueが書き込まれる.

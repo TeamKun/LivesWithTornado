@@ -13,4 +13,5 @@ public class Config {
     public static int limitInvolvedEntity = 0;
     public static double involveBlockProbability = 1.0;
     public static double involveEntityProbability = 1.0;
+    public static double followingSpeed = 0.3;
 }

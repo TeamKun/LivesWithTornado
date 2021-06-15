@@ -9,3 +9,4 @@ exceptSource: false
 limitInvolvedEntity: 0
 involveBlockProbability: 1.0
 involveEntityProbability: 1.0
+followingSpeed: 0.3

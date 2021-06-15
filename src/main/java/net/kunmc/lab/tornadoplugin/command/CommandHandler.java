@@ -9,10 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.PigZombie;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -26,7 +23,7 @@ import java.util.stream.Stream;
 
 public class CommandHandler implements CommandExecutor, TabCompleter {
     private final Map<String, Tornado> stringTornadoMap = new HashMap<>();
-    private final List<String> settingItemList = Arrays.asList("radius", "height", "speed", "riseCoef", "centrifugalCoef", "exceptCreatives", "exceptSpectators", "exceptFlowing", "exceptSource", "effectEnabled", "limit", "involveBlockProbability", "involveEntityProbability");
+    private final List<String> settingItemList = Arrays.asList("radius", "height", "speed", "riseCoef", "centrifugalCoef", "exceptCreatives", "exceptSpectators", "exceptFlowing", "exceptSource", "effectEnabled", "followingSpeed", "limit", "involveBlockProbability", "involveEntityProbability");
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -211,7 +208,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                     entity.setRemoveWhenFarAway(false);
                     entity.setSilent(true);
                     entity.getEquipment().clear();
-                    entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3);
+                    entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(Config.followingSpeed);
                     entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(2048.0);
                     entity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(0.0);
                     entity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK).setBaseValue(0.0);
@@ -252,8 +249,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         Tornado tornado = new Tornado(coreEntity, radius, height, speed, Config.riseCoef, Config.centrifugalCoef);
         tornado.setExceptCreatives(Config.exceptCreatives);
         tornado.setExceptSpectators(Config.exceptSpectators);
-        tornado.setExceptFlowing(Config.exceptFlowing);
-        tornado.setExceptSource(false);
+        tornado.setExceptFlowing(true);
+        tornado.setExceptSource(true);
         tornado.setExceptOtherTornado(Config.exceptOtherTornado);
         tornado.setLimitInvolvedEntity(1500);
         tornado.setInvolveBlockProbability(0.15);
@@ -351,6 +348,15 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 break;
             case "involveEntityProbability":
                 tornado.setInvolveEntityProbability(value);
+                break;
+            case "followingSpeed":
+                Entity entity = tornado.getCoreEntity();
+                if (entity.hasMetadata(Config.metadataKey)) {
+                    ((LivingEntity) entity).getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(value);
+                } else {
+                    sender.sendMessage(ChatColor.RED + tornadoName + "はfollowingSpeedを設定可能な竜巻ではありません.");
+                    return;
+                }
                 break;
         }
 

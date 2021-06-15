@@ -45,8 +45,7 @@ public class Tornado {
         this.riseCoef = riseCoef;
         this.centrifugalCoef = centrifugalCoef;
     }
-
-
+    
     public void summon() {
         involveTask = new InvolveTask().runTaskTimer(TornadoPlugin.getInstance(), 0, 4);
         effectTask = new EffectTaskGenerator().runTaskTimerAsynchronously(TornadoPlugin.getInstance(), 0, 60);

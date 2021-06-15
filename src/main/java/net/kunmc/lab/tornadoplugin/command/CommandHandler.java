@@ -223,6 +223,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                                     target.setGlowing(false);
                                 }
                                 this.cancel();
+                                return;
                             }
 
                             Player newTarget = Bukkit.selectEntities(Bukkit.getConsoleSender(), "@r").stream()

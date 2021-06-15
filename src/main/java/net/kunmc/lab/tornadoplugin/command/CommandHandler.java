@@ -253,11 +253,11 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         tornado.setExceptCreatives(Config.exceptCreatives);
         tornado.setExceptSpectators(Config.exceptSpectators);
         tornado.setExceptFlowing(Config.exceptFlowing);
+        tornado.setExceptSource(false);
         tornado.setExceptOtherTornado(Config.exceptOtherTornado);
-        tornado.setLimitInvolvedEntity(Config.limitInvolvedEntity);
-        tornado.setInvolveBlockProbability(Config.involveBlockProbability);
-        tornado.setInvolveBlockProbability(0.15);
         tornado.setLimitInvolvedEntity(1500);
+        tornado.setInvolveBlockProbability(0.15);
+        tornado.setInvolveEntityProbability(Config.involveEntityProbability);
         tornado.summon();
 
         stringTornadoMap.put(tornadoName, tornado);

@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 
 public class CommandHandler implements CommandExecutor, TabCompleter {
     private final Map<String, Tornado> stringTornadoMap = new HashMap<>();
-    private final List<String> settingItemList = Arrays.asList("radius", "height", "speed", "riseCoef", "centrifugalCoef", "exceptCreatives", "exceptSpectators", "exceptFlowing", "effectEnabled", "limit", "involveBlockProbability", "involveEntityProbability");
+    private final List<String> settingItemList = Arrays.asList("radius", "height", "speed", "riseCoef", "centrifugalCoef", "exceptCreatives", "exceptSpectators", "exceptFlowing", "exceptSource", "effectEnabled", "limit", "involveBlockProbability", "involveEntityProbability");
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -116,9 +116,11 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         tornado.setExceptCreatives(Config.exceptCreatives);
         tornado.setExceptSpectators(Config.exceptSpectators);
         tornado.setExceptFlowing(Config.exceptFlowing);
+        tornado.setExceptSource(Config.exceptSource);
         tornado.setExceptOtherTornado(Config.exceptOtherTornado);
         tornado.setLimitInvolvedEntity(Config.limitInvolvedEntity);
         tornado.setInvolveBlockProbability(Config.involveBlockProbability);
+        tornado.setInvolveEntityProbability(Config.involveEntityProbability);
         tornado.summon();
         stringTornadoMap.put(tornadoName, tornado);
         sender.sendMessage(ChatColor.GREEN + tornadoName + "が" + entityList.get(0).getName() + "に生成されました.");
@@ -334,6 +336,9 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 break;
             case "exceptFlowing":
                 tornado.setExceptFlowing(value != 0.0);
+                break;
+            case "exceptSource":
+                tornado.setExceptSource(value != 0.0);
                 break;
             case "effectEnabled":
                 tornado.setEffectEnabled(value != 0.0);

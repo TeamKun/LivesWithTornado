@@ -25,6 +25,7 @@ public class Tornado {
     private boolean exceptCreatives = true;
     private boolean exceptSpectators = true;
     private boolean exceptFlowing = true;
+    private boolean exceptSource = false;
     private boolean exceptOtherTornado = true;
     private int limitInvolvedEntity = 0;
     private double involveBlockProbability = 1.0;
@@ -92,6 +93,10 @@ public class Tornado {
 
     public void setExceptFlowing(boolean exceptFlowing) {
         this.exceptFlowing = exceptFlowing;
+    }
+
+    public void setExceptSource(boolean exceptSource) {
+        this.exceptSource = exceptSource;
     }
 
     public void setEffectEnabled(boolean enable) {
@@ -184,9 +189,14 @@ public class Tornado {
                         Block b = center.getRelative(x, 0, z);
 
                         //exceptFlowingがtrueの場合,溶岩流と水流を処理対象から外す.
+                        //exceptSourceがtrueの場合,溶岩原と水源も処理対象から外す.
                         if (b.getType().equals(Material.LAVA) || b.getType().equals(Material.WATER)) {
                             Levelled data = ((Levelled) b.getBlockData());
                             if (exceptFlowing && data.getLevel() >= 1) {
+                                continue;
+                            }
+
+                            if (exceptSource && data.getLevel() == 0) {
                                 continue;
                             }
                         }

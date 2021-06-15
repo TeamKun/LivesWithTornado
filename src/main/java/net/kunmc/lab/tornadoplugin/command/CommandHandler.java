@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 
 public class CommandHandler implements CommandExecutor, TabCompleter {
     private final Map<String, Tornado> stringTornadoMap = new HashMap<>();
-    private final List<String> settingItemList = Arrays.asList("radius", "height", "speed", "riseCoef", "centrifugalCoef", "exceptCreatives", "exceptSpectators", "exceptFlowing", "effectEnabled", "limit", "probability");
+    private final List<String> settingItemList = Arrays.asList("radius", "height", "speed", "riseCoef", "centrifugalCoef", "exceptCreatives", "exceptSpectators", "exceptFlowing", "effectEnabled", "limit", "involveBlockProbability", "involveEntityProbability");
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -118,7 +118,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         tornado.setExceptFlowing(Config.exceptFlowing);
         tornado.setExceptOtherTornado(Config.exceptOtherTornado);
         tornado.setLimitInvolvedEntity(Config.limitInvolvedEntity);
-        tornado.setInvolveProbability(Config.involveProbability);
+        tornado.setInvolveBlockProbability(Config.involveBlockProbability);
         tornado.summon();
         stringTornadoMap.put(tornadoName, tornado);
         sender.sendMessage(ChatColor.GREEN + tornadoName + "が" + entityList.get(0).getName() + "に生成されました.");
@@ -253,8 +253,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         tornado.setExceptFlowing(Config.exceptFlowing);
         tornado.setExceptOtherTornado(Config.exceptOtherTornado);
         tornado.setLimitInvolvedEntity(Config.limitInvolvedEntity);
-        tornado.setInvolveProbability(Config.involveProbability);
-        tornado.setInvolveProbability(0.15);
+        tornado.setInvolveBlockProbability(Config.involveBlockProbability);
+        tornado.setInvolveBlockProbability(0.15);
         tornado.setLimitInvolvedEntity(1500);
         tornado.summon();
 
@@ -341,8 +341,11 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             case "limit":
                 tornado.setLimitInvolvedEntity(((int) value));
                 break;
-            case "probability":
-                tornado.setInvolveProbability(value);
+            case "involveBlockProbability":
+                tornado.setInvolveBlockProbability(value);
+                break;
+            case "involveEntityProbability":
+                tornado.setInvolveEntityProbability(value);
                 break;
         }
 

@@ -6,4 +6,5 @@ exceptCreatives: true
 exceptSpectators: true
 exceptFlowing: true
 limitInvolvedEntity: 0
-involveProbability: 1.0
+involveBlockProbability: 1.0
+involveEntityProbability: 1.0

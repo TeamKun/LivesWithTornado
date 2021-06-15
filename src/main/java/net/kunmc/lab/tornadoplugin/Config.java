@@ -10,5 +10,6 @@ public class Config {
     public static boolean exceptFlowing = true;
     public static boolean exceptOtherTornado = true;
     public static int limitInvolvedEntity = 0;
-    public static double involveProbability = 1.0;
+    public static double involveBlockProbability = 1.0;
+    public static double involveEntityProbability = 1.0;
 }

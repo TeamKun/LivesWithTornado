@@ -25,7 +25,8 @@ public final class TornadoPlugin extends JavaPlugin {
         Config.exceptSpectators = getConfig().getBoolean("exceptSpectators");
         Config.exceptFlowing = getConfig().getBoolean("exceptFlowing");
         Config.limitInvolvedEntity = getConfig().getInt("limitInvolvedEntity");
-        Config.involveProbability = getConfig().getDouble("involveProbability");
+        Config.involveBlockProbability = getConfig().getDouble("involveBlockProbability");
+        Config.involveEntityProbability = getConfig().getDouble("involveEntityProbability");
 
         CommandHandler commandHandler = new CommandHandler();
         getServer().getPluginCommand("tornado").setExecutor(commandHandler);

@@ -27,7 +27,8 @@ public class Tornado {
     private boolean exceptFlowing = true;
     private boolean exceptOtherTornado = true;
     private int limitInvolvedEntity = 0;
-    private double involveProbability = 1.0;
+    private double involveBlockProbability = 1.0;
+    private double involveEntityProbability = 1.0;
     private boolean isRemoved = false;
     private String entityMetadataKey = "TornadoPluginEntity";
     private final Set<Entity> involvedEntitySet = Collections.synchronizedSet(new LinkedHashSet<>());
@@ -44,7 +45,7 @@ public class Tornado {
         this.centrifugalCoef = centrifugalCoef;
     }
 
- 
+
     public void summon() {
         involveTask = new InvolveTask().runTaskTimer(TornadoPlugin.getInstance(), 0, 4);
         effectTask = new EffectTaskGenerator().runTaskTimerAsynchronously(TornadoPlugin.getInstance(), 0, 60);
@@ -106,8 +107,12 @@ public class Tornado {
         this.limitInvolvedEntity = limit;
     }
 
-    public void setInvolveProbability(double probability) {
-        this.involveProbability = probability;
+    public void setInvolveBlockProbability(double probability) {
+        this.involveBlockProbability = probability;
+    }
+
+    public void setInvolveEntityProbability(double probability) {
+        this.involveEntityProbability = probability;
     }
 
     public void setExceptOtherTornado(boolean exceptOtherTornado) {
@@ -140,7 +145,7 @@ public class Tornado {
                     return;
                 }
 
-                if (Math.random() <= involveProbability) {
+                if (Math.random() <= involveBlockProbability) {
                     BlockData blockData = x.getBlockData();
                     x.setType(Material.AIR);
                     FallingBlock fallingBlock = x.getWorld().spawnFallingBlock(x.getLocation(), blockData);
@@ -160,7 +165,7 @@ public class Tornado {
                         return true;
                     })
                     .forEach(x -> {
-                        if (Math.random() <= involveProbability) {
+                        if (Math.random() <= involveEntityProbability) {
                             if (involvedEntitySet.add(x)) {
                                 windUpTaskSet.add(new WindUpTask(x).runTaskTimerAsynchronously(TornadoPlugin.getInstance(), 0, 0));
                             }
